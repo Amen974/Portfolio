@@ -1,8 +1,24 @@
 @import "tailwindcss";
 
+html{
+  cursor: none;
+}
+
 body{
   background-color: #0a0f1e;
-  cursor: none;
+  font-family: 'Space Mono', monospace;
+  color: white;
+}
+
+@font-face {
+  font-family: 'Mussels';
+  src: url('src/assets/TT_Mussels_Regular.d411d6e05a0422312d35.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+h1, h2, h3 {
+  font-family: 'Mussels', sans-serif;
 }
 
 ::-webkit-scrollbar {
@@ -14,7 +30,7 @@ body{
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #00b4d8;
+  background: #da7756;
   border-radius: 999px;
   cursor: grab;
 }

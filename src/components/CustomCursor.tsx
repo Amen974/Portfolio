@@ -25,7 +25,7 @@ const CustomCursor = () => {
 
   return (
     <div
-      className="fixed w-4 h-4 rounded-full border border-[#00b4d8] pointer-events-none z-9999 transition-opacity duration-300"
+      className="fixed w-4 h-4 rounded-full border border-[#da7756] pointer-events-none z-9999 transition-opacity duration-300"
       style={{
         left: position.x,
         top: position.y,
