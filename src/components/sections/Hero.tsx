@@ -22,7 +22,8 @@ const Hero = () => {
   const robotRedy = useRef<(() => void) | null>(null)
 
   useGSAP(() => {
-    const splitLetters = (el: HTMLElement) => {
+    const splitLetters = (el: HTMLElement | null) => {
+      if (!el) return []
       const text = el.innerText
       el.innerHTML = text
         .split("")
@@ -33,7 +34,7 @@ const Hero = () => {
 
     const letters1 = splitLetters(span4.current!)
     const letters2 = splitLetters(span5.current!)
-    const claudeLetrs = splitLetters(hi.current)
+    const claudeLetrs = splitLetters(hi.current!)
 
     const tl = gsap.timeline({ defaults: { duration: 0.5, ease: "power2.out" } })
 
