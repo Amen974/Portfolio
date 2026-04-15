@@ -1,11 +1,13 @@
 import gsap from "gsap"
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
+import type { RobotState } from "../../Types"
 
 interface RobotProps {
-  onReady?: (wave: () => void) => void
+  state?: RobotState
+  size?: number
 }
 
-const Robot = ({ onReady }: RobotProps) => {
+const Robot = ({ state = 'waveidle', size = 25 }: RobotProps) => {
   const head = useRef<SVGRectElement>(null)
   const leftEye = useRef<SVGRectElement>(null)
   const rightEye = useRef<SVGRectElement>(null)
@@ -15,12 +17,85 @@ const Robot = ({ onReady }: RobotProps) => {
   const leftLeg2 = useRef<SVGRectElement>(null)
   const rightLeg1 = useRef<SVGRectElement>(null)
   const rightLeg2 = useRef<SVGRectElement>(null)
-
   const svgRef = useRef<SVGSVGElement>(null)
+
+  const [robotState, setRobotState] = useState<RobotState>(state)
+
+  useEffect(() => {
+    setRobotState(state)
+  }, [state])
+
+  const killAll = () => {
+    [head, leftEye, rightEye, leftHand, rightHand, leftLeg1, leftLeg2, rightLeg1, rightLeg2].forEach(
+      (ref) => gsap.killTweensOf(ref.current)
+    )
+  }
+
+  const playWaveidle = () => {
+    killAll()
+    const tl = gsap.timeline()
+
+    gsap.to(svgRef.current, {
+      y: -6,
+      duration: 1.8,
+      repeat: -1,
+      yoyo: true,
+      ease: "sine.inOut",
+    })
+
+    tl.to(leftHand.current, { y: -40, duration: 0.3 })
+      .to(leftHand.current, {
+        x: 25,
+        duration: 0.8,
+        repeat: 3,
+        yoyo: true,
+        ease: "power1.inOut",
+      }, "-=0.2")
+      .to(leftHand.current, { x: 0, duration: 0.4, ease: "elastic.out(0.5, 0.3)" })
+      .to(leftHand.current, { y: 0, duration: 0.3 })
+      .call(() => { gsap.delayedCall(3, playWaveidle) })
+  }
+
+  const playThink = () => {
+    killAll()
+    gsap.to(head.current, {
+      rotation: 12,
+      transformOrigin: "center center",
+      duration: 0.4,
+      yoyo: true,
+      repeat: -1,
+      ease: "power1.inOut",
+      repeatDelay: 1.5,
+    })
+  }
+
+  const playType = () => {
+    killAll()
+    const tl = gsap.timeline({ repeat: -1 })
+    tl.to([leftHand.current, rightHand.current], {
+      y: 15,
+      duration: 0.15,
+      stagger: 0.1,
+      ease: "power1.in",
+    }).to([leftHand.current, rightHand.current], {
+      y: 0,
+      duration: 0.15,
+      stagger: 0.1,
+      ease: "power1.out",
+    })
+  }
+
+  useEffect(() => {
+    if (robotState === 'waveidle') playWaveidle()
+    if (robotState === 'think') playThink()
+    if (robotState === 'type') playType()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [robotState])
 
   useEffect(() => {
     const onMove = (e: MouseEvent) => {
-      [leftEye, rightEye].forEach((eye) => {
+      if (robotState !== 'waveidle') return
+      ;[leftEye, rightEye].forEach((eye) => {
         if (!eye.current) return
         const rect = eye.current.getBoundingClientRect()
         const eyeCX = rect.left + rect.width / 2
@@ -38,40 +113,20 @@ const Robot = ({ onReady }: RobotProps) => {
 
     window.addEventListener("mousemove", onMove)
     return () => window.removeEventListener("mousemove", onMove)
-  }, [])
-
-  const wave = (): void => {
-    const tl = gsap.timeline()
-    tl.to(leftHand.current, { y: -40 })
-      .to(leftHand.current, {
-        x: 25,
-        duration: 0.8,
-        repeat: 3,
-        yoyo: true,
-        ease: "power1.inOut"
-      }, '-=0.2')
-      .to(leftHand.current, { x: 0, duration: 0.4, ease: "elastic.out(0.5, 0.3)" })
-      .to(leftHand.current, { y: 0 })
-      .call(() => {
-      gsap.delayedCall(3, wave)
-    })
-  }
-
-  useEffect(() => {
-    onReady?.(wave)
-  },)
+  }, [robotState])
 
   return (
-    <svg ref={svgRef} viewBox="0 0 200 160" style={{ width: '25vw', height: '25vw' }} xmlns="http://www.w3.org/2000/svg">
-      {/* head */}
+    <svg
+      ref={svgRef}
+      viewBox="0 0 200 160"
+      style={{ width: `${size}vw`, height: `${size}vw` }}
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <rect x="50" y="20" width="100" height="80" fill="#da7756" ref={head} />
-      {/* eyes */}
       <rect x="70" y="40" width="10" height="20" fill="white" ref={leftEye} />
       <rect x="120" y="40" width="10" height="20" fill="white" ref={rightEye} />
-      {/* hands */}
       <rect x="31" y="50" width="20" height="20" fill="#da7756" ref={leftHand} />
       <rect x="149" y="50" width="20" height="20" fill="#da7756" ref={rightHand} />
-      {/* legs */}
       <rect x="50" y="100" width="15" height="30" fill="#da7756" ref={leftLeg1} />
       <rect x="70" y="100" width="15" height="30" fill="#da7756" ref={leftLeg2} />
       <rect x="135" y="100" width="15" height="30" fill="#da7756" ref={rightLeg1} />

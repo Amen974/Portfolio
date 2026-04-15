@@ -82,10 +82,10 @@ const Hero = () => {
         <span className="inline-block" ref={span3}>React applications</span>
       </h1>
 
-      <p className="text-[#da7756] absolute right-[13.8vw] top-[4vw]" ref={hi}>hi im claude</p>
+      <p className="text-[#da7756] absolute right-[10.5vw] top-[2vw] md:right-[13.8vw] md:top-[4vw] text-[1.8vw] md:text-[1vw]" ref={hi}>hi im claude</p>
 
       <div className="absolute right-[5vw] top-[2.5vw]" ref={robot}>
-        <Robot onReady={(fn) => {robotRedy.current = fn}} />
+        <Robot />
       </div>
 
       <h1 className="text-[4vw] text-right absolute right-0 top-[30vw] tracking-wide" ref={thirdH1}>with a focus</h1>
