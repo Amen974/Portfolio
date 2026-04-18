@@ -5,9 +5,10 @@ import type { RobotState } from "../../Types"
 interface RobotProps {
   state?: RobotState
   size?: number
+  animate?: boolean
 }
 
-const Robot = ({ state = 'waveidle', size = 25 }: RobotProps) => {
+const Robot = ({ state = 'waveidle', size = 25, animate = false }: RobotProps) => {
   const head = useRef<SVGRectElement>(null)
   const leftEye = useRef<SVGRectElement>(null)
   const rightEye = useRef<SVGRectElement>(null)
@@ -36,7 +37,7 @@ const Robot = ({ state = 'waveidle', size = 25 }: RobotProps) => {
     const tl = gsap.timeline()
 
     gsap.to(svgRef.current, {
-      y: -6,
+      y: -10,
       duration: 1.8,
       repeat: -1,
       yoyo: true,
@@ -69,46 +70,50 @@ const Robot = ({ state = 'waveidle', size = 25 }: RobotProps) => {
     })
   }
 
-  const playType = () => {
-    killAll()
-    const tl = gsap.timeline({ repeat: -1 })
-    tl.to([leftHand.current, rightHand.current], {
-      y: 15,
-      duration: 0.15,
-      stagger: 0.1,
-      ease: "power1.in",
-    }).to([leftHand.current, rightHand.current], {
-      y: 0,
-      duration: 0.15,
-      stagger: 0.1,
-      ease: "power1.out",
-    })
-  }
+  const playMove = () => {
+  killAll()
+
+  const eyes = [leftEye.current, rightEye.current]
+  const legs = [leftLeg1.current, leftLeg2.current, rightLeg1.current, rightLeg2.current]
+  const walkLegs = gsap.timeline({ repeat: 4 })
+
+  walkLegs
+    .to([leftLeg1.current, rightLeg1.current], { height: 10, duration: 0.1 })
+    .to([leftLeg2.current, rightLeg2.current], { height: 28, duration: 0.1 })
+    .to([leftLeg1.current, rightLeg1.current], { height: 28, duration: 0.1 })
+    .to([leftLeg2.current, rightLeg2.current], { height: 10, duration: 0.1 })
+
+  gsap.timeline()
+    .to(eyes, { x: 10, duration: 1 })
+    .add(walkLegs)
+    .to(legs, { height: 28, duration: 0.1 })
+    .to(eyes, { y: 6, duration: 1, ease: "power2.out" },)
+}
 
   useEffect(() => {
     if (robotState === 'waveidle') playWaveidle()
     if (robotState === 'think') playThink()
-    if (robotState === 'type') playType()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [robotState])
+    if (robotState === 'Move' && animate === true) playMove()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [robotState, animate])
 
   useEffect(() => {
     const onMove = (e: MouseEvent) => {
       if (robotState !== 'waveidle') return
-      ;[leftEye, rightEye].forEach((eye) => {
-        if (!eye.current) return
-        const rect = eye.current.getBoundingClientRect()
-        const eyeCX = rect.left + rect.width / 2
-        const eyeCY = rect.top + rect.height / 2
-        const angle = Math.atan2(e.clientY - eyeCY, e.clientX - eyeCX)
-        const dist = 3
-        gsap.to(eye.current, {
-          x: Math.cos(angle) * dist,
-          y: Math.sin(angle) * dist,
-          duration: 0.3,
-          ease: "power2.out",
+        ;[leftEye, rightEye].forEach((eye) => {
+          if (!eye.current) return
+          const rect = eye.current.getBoundingClientRect()
+          const eyeCX = rect.left + rect.width / 2
+          const eyeCY = rect.top + rect.height / 2
+          const angle = Math.atan2(e.clientY - eyeCY, e.clientX - eyeCX)
+          const dist = 3
+          gsap.to(eye.current, {
+            x: Math.cos(angle) * dist,
+            y: Math.sin(angle) * dist,
+            duration: 0.3,
+            ease: "power2.out",
+          })
         })
-      })
     }
 
     window.addEventListener("mousemove", onMove)
@@ -129,8 +134,8 @@ const Robot = ({ state = 'waveidle', size = 25 }: RobotProps) => {
       <rect x="149" y="50" width="20" height="20" fill="#da7756" ref={rightHand} />
       <rect x="50" y="100" width="15" height="30" fill="#da7756" ref={leftLeg1} />
       <rect x="70" y="100" width="15" height="30" fill="#da7756" ref={leftLeg2} />
-      <rect x="135" y="100" width="15" height="30" fill="#da7756" ref={rightLeg1} />
-      <rect x="115" y="100" width="15" height="30" fill="#da7756" ref={rightLeg2} />
+      <rect x="135" y="100" width="15" height="30" fill="#da7756" ref={rightLeg2} />
+      <rect x="115" y="100" width="15" height="30" fill="#da7756" ref={rightLeg1} />
     </svg>
   )
 }

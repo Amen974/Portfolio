@@ -3,6 +3,7 @@ import Claude from "../claude/Claude"
 import Robot from "../robot/Robot"
 import gsap from "gsap"
 import { useRef } from "react"
+import { useCursor } from "../CursorContext"
 
 const Hero = () => {
   const firstH1 = useRef(null)
@@ -20,6 +21,8 @@ const Hero = () => {
   const hi = useRef(null)
 
   const robotRedy = useRef<(() => void) | null>(null)
+
+  const { setType } = useCursor()
 
   useGSAP(() => {
     const splitLetters = (el: HTMLElement | null) => {
@@ -84,14 +87,14 @@ const Hero = () => {
 
       <p className="text-[#da7756] absolute right-[10.5vw] top-[2vw] md:right-[13.8vw] md:top-[4vw] text-[1.8vw] md:text-[1vw]" ref={hi}>hi im claude</p>
 
-      <div className="absolute right-[5vw] top-[2.5vw]" ref={robot}>
+      <div className="absolute right-[5vw] top-[2.5vw]" ref={robot} onMouseEnter={(()=>setType('click'))} onMouseLeave={(()=>setType('default'))}>
         <Robot />
       </div>
 
       <h1 className="text-[4vw] text-right absolute right-0 top-[30vw] tracking-wide" ref={thirdH1}>with a focus</h1>
       <h1 className="text-[4vw]/[1em] text-right absolute right-[2vw] top-[35vw] tracking-wide" ref={fourthH1}>on performance</h1>
 
-      <div className="absolute left-[5vw] bottom-[6vw]" ref={claude}>
+      <div className="absolute left-[5vw] bottom-[6vw]" ref={claude} onMouseEnter={(()=>setType('click'))} onMouseLeave={(()=>setType('default'))}>
         <Claude />
       </div>
 
