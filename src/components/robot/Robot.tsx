@@ -87,7 +87,7 @@ const Robot = ({ state = 'waveidle', size = 25, animate = false }: RobotProps) =
     .to(eyes, { x: 10, duration: 1 })
     .add(walkLegs)
     .to(legs, { height: 28, duration: 0.1 })
-    .to(eyes, { y: 6, duration: 1, ease: "power2.out" },)
+    .to(eyes, { y: 10, duration: 1, ease: "power2.out" },)
 }
 
   useEffect(() => {
