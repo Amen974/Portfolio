@@ -4,12 +4,11 @@ import { useCursor } from "./CursorContext";
 const CustomCursor = () => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isVisible, setIsVisible] = useState(false);
-  const [hasFinePointer, setHasFinePointer] = useState(false);
   const { type } = useCursor();
-
+  const hasFinePointer = window.matchMedia('(pointer: fine)').matches;
   useEffect(() => {
     if (!window.matchMedia('(pointer: fine)').matches) return;
-    setHasFinePointer(true);
+    if (!hasFinePointer) return;
 
     const handleMouseMove = (e: MouseEvent) => {
       setPosition({ x: e.clientX, y: e.clientY });
@@ -27,7 +26,7 @@ const CustomCursor = () => {
       document.removeEventListener("mouseleave", handleMouseLeave);
       document.removeEventListener("mouseenter", handleMouseEnter);
     };
-  }, []);
+  }, [hasFinePointer]);
 
   if (!hasFinePointer) return null;
 
