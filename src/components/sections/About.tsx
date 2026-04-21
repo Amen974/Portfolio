@@ -23,6 +23,7 @@ const About = () => {
   const letterM = useRef<HTMLSpanElement>(null);
   const letterE = useRef<HTMLSpanElement>(null);
   const text = useRef<HTMLParagraphElement>(null);
+  const text2 = useRef<HTMLParagraphElement>(null);
   const section = useRef<HTMLElement>(null);
   const skills = useRef<HTMLDivElement>(null)
 
@@ -40,6 +41,7 @@ const About = () => {
       .to(letterM.current, { xPercent: -130, duration: 0.5, ease: "power2.out" })
       .to(letterE.current, { xPercent: 174, duration: 0.5, ease: "power2.out" }, "<")
       .to(text.current, { opacity: 1, duration: 0.4, ease: "power1" }, "-=0.3")
+      .to(text2.current, { opacity: 1, duration: 0.4, ease: "power1" }, "<")
       .from(skills.current, {opacity:0}, '<');
   }, []);
 
@@ -77,7 +79,7 @@ const About = () => {
         fast, and memorable.
       </p>
 
-      <p className="text-xs text-center min-[800px]:hidden mb-5">
+      <p className="text-xs text-center min-[800px]:hidden mb-5 opacity-0" ref={text2}>
         I build fast, interactive React apps — real-time, AI-powered, and visually
         sharp. From scratch or existing codebase, I handle everything from architecture
         to deployment. If your users interact with it, I make it memorable.

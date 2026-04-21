@@ -140,7 +140,7 @@ const Projects = () => {
   const robotSize = windowWidth <= 800 ? 15 : 5
 
   return (
-    <section className="uppercase pt-[15vw] pb-[10vw] px-[3vw] relative sectoion">
+    <section className="uppercase pt-[15vw] px-[3vw] relative sectoion">
       <p className="text-xs min-[800px]:text-[0.8vw] text-end">+ Selected Projects</p>
       <div className="absolute top-[8vw] min-[400px]:top-[6vw] min-[800px]:top-[12.4vw] left-[6vw]"
         ref={robot}>

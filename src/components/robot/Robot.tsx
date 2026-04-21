@@ -57,19 +57,6 @@ const Robot = ({ state = 'waveidle', size = 25, animate = false }: RobotProps) =
       .call(() => { gsap.delayedCall(3, playWaveidle) })
   }
 
-  const playThink = () => {
-    killAll()
-    gsap.to(head.current, {
-      rotation: 12,
-      transformOrigin: "center center",
-      duration: 0.4,
-      yoyo: true,
-      repeat: -1,
-      ease: "power1.inOut",
-      repeatDelay: 1.5,
-    })
-  }
-
   const playMove = () => {
   killAll()
 
@@ -92,14 +79,13 @@ const Robot = ({ state = 'waveidle', size = 25, animate = false }: RobotProps) =
 
   useEffect(() => {
     if (robotState === 'waveidle') playWaveidle()
-    if (robotState === 'think') playThink()
     if (robotState === 'Move' && animate === true) playMove()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [robotState, animate])
 
   useEffect(() => {
     const onMove = (e: MouseEvent) => {
-      if (robotState !== 'waveidle') return
+      if (robotState === 'Move') return
         ;[leftEye, rightEye].forEach((eye) => {
           if (!eye.current) return
           const rect = eye.current.getBoundingClientRect()
