@@ -1,19 +1,30 @@
+import { Route, Routes } from "react-router-dom"
 import CustomCursor from "./components/CustomCursor"
-import About from "./components/sections/About"
-import Contact from "./components/sections/Contact"
-import Hero from "./components/sections/Hero"
-import Projects from "./components/sections/Projects/Projects"
+import Main from "./Pages/main/main"
+import Chat from "./Pages/Chat"
+import Transition from "./Transition"
+import { usePageTransition } from "./usePageTransition"
+import { TransitionProvider } from "./TransitionProvider"
+
+const AppInner = () => {
+  const { isStart, onDone } = usePageTransition()
+  return (
+    <>
+      <CustomCursor />
+      {isStart && <Transition isStart={isStart} onDone={onDone} />}
+      <Routes>
+        <Route path="/" element={<Main />} />
+        <Route path="/Chat" element={<Chat />} />
+      </Routes>
+    </>
+  )
+}
 
 function App() {
-
   return (
-    <div className="pt-[5vw]"> 
-      <CustomCursor/>
-      <Hero/>
-      <About/>
-      <Projects/>
-      <Contact/>
-    </div>
+    <TransitionProvider>
+      <AppInner />
+    </TransitionProvider>
   )
 }
 

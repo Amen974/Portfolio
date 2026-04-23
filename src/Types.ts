@@ -1,2 +1,2 @@
-export type RobotState = "waveidle" | "contact" | "Move"
+export type RobotState = "waveidle" | "Move" | 'transition' | 'non'
 export type CursorType = 'default' | 'click' | 'link'

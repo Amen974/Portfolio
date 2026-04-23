@@ -1,11 +1,12 @@
-import Robot from "../robot/Robot"
 import { FaLinkedin, FaGithub, FaEnvelope } from 'react-icons/fa'
 import { SiUpwork } from 'react-icons/si'
-import { useCursor } from "../CursorContext"
 import { useEffect, useRef, useState } from "react"
 import { useGSAP } from "@gsap/react"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/all"
+import { useCursor } from '../../../components/CursorContext'
+import Robot from '../../../components/Robot'
+import { usePageTransition } from '../../../usePageTransition'
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -64,9 +65,9 @@ const Contact = () => {
       .from(links, { opacity: 0, y: 30, stagger: 0.15, ease: "back.out(1.2)" })
   }, [])
 
-  
-
   const size = width < 800 ? 35 : 25;
+
+    const { triggerTransition } = usePageTransition()
   return (
     <section className="uppercase mb-[10vw] min-[800px]:mb-0 relative h-[45vw]" ref={section}>
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" ref={robot}>
@@ -74,7 +75,14 @@ const Contact = () => {
           <p className="absolute text-[#da7756] text-xs min-[800px]:text-[1vw] left-1/2 -translate-x-1/2 -top-[-2vw] whitespace-nowrap" ref={text}>
             LET'S WORK Together
           </p>
-          <Robot state="contact" size={size} />
+          <div 
+            onMouseEnter={(()=>setType('click'))} 
+            onMouseLeave={(()=>setType('default'))}
+            onClick={() => triggerTransition('/Chat')}
+          >
+            <Robot state="non" size={size} />
+          </div>
+          
         </div>
       </div>
 
@@ -82,7 +90,7 @@ const Contact = () => {
         ref={linkedin}
         href='https://www.linkedin.com/in/amen-allah-arfaoui-a4a3a7397/'
         target="blank"
-        className="border border-[#da7756] px-[2vw] py-[1vw] flex items-center justify-center gap-[0.5vw] shadow-2xl rounded-sm absolute left-[13vw] top-[16.5vw] min-[800px]:left-[25vw] min-[800px]:top-[18.2vw]"
+        className="border border-[#da7756] px-[2vw] py-[1vw] flex items-center justify-center gap-[0.5vw] shadow-2xl rounded-sm absolute left-[13vw] min-[400]:left-[16vw] top-[16.5vw] min-[800px]:left-[25vw] min-[800px]:top-[18.2vw]"
         onMouseEnter={(() => setType('link'))}
         onMouseLeave={(() => setType('default'))}
       >
@@ -118,7 +126,7 @@ const Contact = () => {
         ref={upwork}
         href='https://www.upwork.com/freelancers/~010740a1ca4a28c240'
         target="blank"
-        className="border border-[#da7756] px-[2vw] py-[1vw] flex items-center justify-center gap-[0.5vw] shadow-2xl rounded-sm absolute left-[65vw] top-[16.5vw] min-[800px]:left-[63.5vw] min-[800px]:top-[18.2vw]"
+        className="border border-[#da7756] px-[2vw] py-[1vw] flex items-center justify-center gap-[0.5vw] shadow-2xl rounded-sm absolute right-[16.8vw]  top-[16.5vw] min-[800px]:right-[26vw] min-[800px]:top-[18.2vw]"
         onMouseEnter={(() => setType('link'))}
         onMouseLeave={(() => setType('default'))}
       >

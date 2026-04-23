@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react"
-import { useCursor } from "../../CursorContext"
 import { projects } from "./constent"
 import gsap from "gsap"
-import Robot from "../../robot/Robot"
 import { ScrollTrigger } from "gsap/all"
 import { useGSAP } from "@gsap/react"
+import { useCursor } from "../../../../components/CursorContext"
+import Robot from "../../../../components/Robot"
 
 gsap.registerPlugin(ScrollTrigger);
 

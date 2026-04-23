@@ -1,14 +1,15 @@
 import gsap from "gsap"
 import { useEffect, useRef, useState } from "react"
-import type { RobotState } from "../../Types"
+import type { RobotState } from "../Types"
 
 interface RobotProps {
   state?: RobotState
   size?: number
   animate?: boolean
+  onReady?: (play: () => void) => void  // expose playTransition
 }
 
-const Robot = ({ state = 'waveidle', size = 25, animate = false }: RobotProps) => {
+const Robot = ({ state = 'waveidle', size = 25, animate = false, onReady }: RobotProps) => {
   const head = useRef<SVGRectElement>(null)
   const leftEye = useRef<SVGRectElement>(null)
   const rightEye = useRef<SVGRectElement>(null)
@@ -58,34 +59,57 @@ const Robot = ({ state = 'waveidle', size = 25, animate = false }: RobotProps) =
   }
 
   const playMove = () => {
-  killAll()
+    killAll()
 
-  const eyes = [leftEye.current, rightEye.current]
-  const legs = [leftLeg1.current, leftLeg2.current, rightLeg1.current, rightLeg2.current]
-  const walkLegs = gsap.timeline({ repeat: 4 })
+    const eyes = [leftEye.current, rightEye.current]
+    const legs = [leftLeg1.current, leftLeg2.current, rightLeg1.current, rightLeg2.current]
+    const walkLegs = gsap.timeline({ repeat: 4 })
 
-  walkLegs
-    .to([leftLeg1.current, rightLeg1.current], { height: 10, duration: 0.1 })
-    .to([leftLeg2.current, rightLeg2.current], { height: 28, duration: 0.1 })
-    .to([leftLeg1.current, rightLeg1.current], { height: 28, duration: 0.1 })
-    .to([leftLeg2.current, rightLeg2.current], { height: 10, duration: 0.1 })
+    walkLegs
+      .to([leftLeg1.current, rightLeg1.current], { height: 10, duration: 0.1 })
+      .to([leftLeg2.current, rightLeg2.current], { height: 28, duration: 0.1 })
+      .to([leftLeg1.current, rightLeg1.current], { height: 28, duration: 0.1 })
+      .to([leftLeg2.current, rightLeg2.current], { height: 10, duration: 0.1 })
 
-  gsap.timeline()
-    .to(eyes, { x: 10, duration: 1 })
-    .add(walkLegs)
-    .to(legs, { height: 28, duration: 0.1 })
-    .to(eyes, { y: 10, duration: 1, ease: "power2.out" },)
-}
+    gsap.timeline()
+      .to(eyes, { x: 10, duration: 1 })
+      .add(walkLegs)
+      .to(legs, { height: 28, duration: 0.1 })
+      .to(eyes, { y: 10, duration: 1, ease: "power2.out" },)
+  }
+
+  const playTransition = () => {
+    killAll()
+
+    const eyes = [leftEye.current, rightEye.current]
+    const walkLegs = gsap.timeline({ repeat: -1 })
+
+    walkLegs
+      .to([leftLeg1.current, rightLeg1.current], { height: 10, duration: 0.1 })
+      .to([leftLeg2.current, rightLeg2.current], { height: 28, duration: 0.1 })
+      .to([leftLeg1.current, rightLeg1.current], { height: 28, duration: 0.1 })
+      .to([leftLeg2.current, rightLeg2.current], { height: 10, duration: 0.1 })
+
+    gsap.timeline()
+      .to(eyes, { x: 10, duration: 0, })
+      .add(walkLegs)
+  }
+
+  useEffect(() => {
+    onReady?.(playTransition)
+  }, [])
 
   useEffect(() => {
     if (robotState === 'waveidle') playWaveidle()
     if (robotState === 'Move' && animate === true) playMove()
+    if (robotState === 'transition' && animate === true) playTransition()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [robotState, animate])
 
   useEffect(() => {
     const onMove = (e: MouseEvent) => {
       if (robotState === 'Move') return
+      if (robotState === 'transition') return
         ;[leftEye, rightEye].forEach((eye) => {
           if (!eye.current) return
           const rect = eye.current.getBoundingClientRect()
