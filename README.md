@@ -1,73 +1,93 @@
-# React + TypeScript + Vite
+# Portfolio — Amen Allah Arfaoui
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A personal portfolio website built with React and TypeScript, featuring multi-step GSAP animations, a custom page transition system, and an AI-powered chat assistant.
 
-Currently, two official plugins are available:
+🔗 **Live:** [portfolio-delta-eight-29.vercel.app](https://portfolio-delta-eight-29.vercel.app/)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## Highlights
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **GSAP Animation Sequences** — Multi-step entrance animations on the Hero section with staggered text, letter splitting, and choreographed element reveals
+- **Robot Mascot** — An interactive SVG robot with idle, wave, move, and transition states. Eyes track the user's cursor in real time
+- **Page Transitions** — Custom transition system using a shared robot animation that walks across the screen between routes
+- **AI Chat Assistant** — Click the robot to open a full-screen chat panel powered by Gemini AI. The robot scales up and morphs into the chat background as a seamless transition. Multi-turn conversation with full context history
+- **Custom Cursor** — Context-aware cursor that changes state based on hoverable elements
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Tech Stack
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+| Layer | Technology |
+|---|---|
+| Frontend | React + TypeScript + Vite |
+| Styling | Tailwind CSS |
+| Animations | GSAP + @gsap/react |
+| AI | Google Gemini 2.0 Flash API |
+| API Proxy | Vercel Edge Function |
+| Routing | React Router v6 |
+| Deployment | Vercel |
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Architecture
+
+### Animation System
+All GSAP animations use the `useGSAP` hook for proper React integration and cleanup. The Hero section runs a single coordinated timeline — text slides in, the robot scales up, letter-by-letter stagger animations fire, then a continuous rotation starts on the Claude logo.
+
+### Robot Component
+`Robot.tsx` is a self-contained animated SVG with four distinct states:
+- `waveidle` — floats and waves on loop
+- `Move` — walks with leg animation and eye shift
+- `transition` — continuous walk loop used during page transitions
+
+Eyes track the mouse cursor via `getBoundingClientRect` and `Math.atan2` angle calculation.
+
+### Page Transition System
+A `TransitionProvider` + `usePageTransition` hook manages transition state globally. When triggered, a `Transition` overlay mounts with the robot walking across the screen before the route changes.
+
+### AI Chat
+- User clicks the robot → GSAP scales it up while simultaneously animating the SVG fill from `#da7756` to `#0a0f1e`
+- Once the robot covers the screen, the Chat panel mounts via a React portal
+- Messages are sent to a Vercel edge function which proxies to the Gemini API — the key never touches the browser
+- Full conversation history is maintained in React state and sent with every request for multi-turn context
+- Responses are rendered with `react-markdown` for proper formatting
+
+---
+
+## Running Locally
+
+### Prerequisites
+- Node.js 18+
+- A Gemini API key from [aistudio.google.com](https://aistudio.google.com)
+- Vercel CLI
+
+### Setup
+
+```bash
+git clone https://github.com/Amen974/Portfolio.git
+cd Portfolio
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Create a `.env` file in the root:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```env
+GEMINI_API_KEY=your_key_here
 ```
+
+Run with Vercel CLI (required for the edge function):
+
+```bash
+vercel dev
+```
+
+---
+
+## Author
+
+Built by **Amen Allah Arfaoui** — Frontend Developer based in Tunisia, open to junior roles and freelance work.
+
+- GitHub: [github.com/Amen974](https://github.com/Amen974)
+- Email: aamenallah593@gmail.com
+- Upwork: [upwork.com/freelancers/~010740a1ca4a28c240](https://www.upwork.com/freelancers/~010740a1ca4a28c240)
