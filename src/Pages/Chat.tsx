@@ -25,6 +25,12 @@ const Chat = () => {
   if (textareaRef.current) textareaRef.current.style.height = 'auto'
 }
 
+  const load = () => {
+
+  }
+
+  if(loading) load()
+
   return (
     <section className="fixed inset-0 flex flex-col items-center">
 
