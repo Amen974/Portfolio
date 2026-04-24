@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom"
 import CustomCursor from "./components/CustomCursor"
-import Main from "./Pages/main/main"
+import Main from "./Pages/main/Main"
 import Chat from "./Pages/Chat"
 import Transition from "./Transition"
 import { usePageTransition } from "./usePageTransition"
