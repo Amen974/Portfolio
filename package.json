@@ -13,6 +13,7 @@
     "@google/genai": "^1.50.1",
     "@google/generative-ai": "^0.24.1",
     "@gsap/react": "^2.1.2",
+    "@material-symbols-svg/react": "^0.5.0",
     "@tailwindcss/vite": "^4.2.2",
     "gsap": "^3.14.2",
     "react": "^19.2.4",

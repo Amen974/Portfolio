@@ -1,12 +1,20 @@
 import { useRef, useState, useEffect } from "react"
 import ReactMarkdown from 'react-markdown'
 import { useChat } from "../hooks/UseChat"
+import { ArrowLeft, ArrowUpward } from '@material-symbols-svg/react';
+import Claude from "../components/Claude";
+import gsap from "gsap"
+import { useCursor } from "../components/CursorContext";
+import { usePageTransition } from "../usePageTransition";
 
 const Chat = () => {
   const [message, setMessage] = useState<string>('')
   const { messages, loading, sendMessage } = useChat()
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const claudLoading = useRef<HTMLDivElement>(null)
+
+  const { setType } = useCursor()
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -20,17 +28,27 @@ const Chat = () => {
   }
 
   const handleSend = () => {
-  sendMessage(message)
-  setMessage('')
-  if (textareaRef.current) textareaRef.current.style.height = 'auto'
-}
-
-  const load = () => {
-
+    sendMessage(message)
+    setMessage('')
+    if (textareaRef.current) textareaRef.current.style.height = 'auto'
   }
 
-  if(loading) load()
+  useEffect(() => {
+    if (loading) {
+      gsap.to(claudLoading.current, {
+        rotateZ: 360,
+        duration: 3,
+        repeat: -1,
+        ease: "none",
+        immediateRender: false,
+      })
+    } else {
+      gsap.killTweensOf(claudLoading.current)
+      gsap.set(claudLoading.current, { rotateZ: 0 })
+    }
+  }, [loading])
 
+  const { triggerTransition } = usePageTransition()
   return (
     <section className="fixed inset-0 flex flex-col items-center">
 
@@ -44,14 +62,26 @@ const Chat = () => {
             </div>
           ))}
           <div ref={messagesEndRef} />
+          {messages.length > 0 && (
+            <div ref={claudLoading} className="h-[3vw] w-[3vw]">
+              <Claude size={3} />
+            </div>
+          )}
+
         </div>
+        {messages.length === 0 && (
+          <div className="uppercase flex items-center text-[2.5vw] gap-2 absolute bottom-10 left-1/2 -translate-x-1/2">
+            <Claude size={3} />
+            <h1>ask me about Amen</h1>
+          </div>
+        )}
       </div>
 
       <div className="border border-[#da7756] shadow-xs shadow-black rounded-3xl p-[1.5vw] flex flex-col fixed bottom-10 left-1/2 -translate-x-1/2 w-[95vw] max-w-175 bg-[#0a0f1e]">
         <textarea
           ref={textareaRef}
           value={message}
-          className="outline-none resize-none overflow-y-auto min-h-11 max-h-[50vh]"
+          className="outline-none resize-none overflow-y-auto min-h-14 max-h-[50vh]"
           placeholder="SEND..."
           onChange={handleInput}
           rows={1}
@@ -62,10 +92,16 @@ const Chat = () => {
             }
           }}
         />
-        <div className="relative h-3">
-          <button className="absolute right-0" onClick={handleSend}>send</button>
-        </div>
+        <button className="absolute min-[800px]:right-[1vw] right-[3vw] min-[800px]:bottom-[1vw] bottom-[2.5vw] bg-[#da7756] rounded-lg h-8 w-8 flex justify-center items-center hover:bg-[#cc6f50]" onClick={handleSend}><ArrowUpward size={20} /></button>
       </div>
+
+      <button className="absolute left-3 top-2"
+        onMouseEnter={(() => setType('click'))}
+        onMouseLeave={(() => setType('default'))}
+        onClick={() => triggerTransition('/')}
+      >
+        <ArrowLeft size={30} color="#da7756" />
+      </button>
 
     </section>
   )

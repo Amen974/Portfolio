@@ -1,7 +1,12 @@
 
-const Claude = () => {
+interface Claude {
+  size?: number
+  animate?: boolean
+}
+
+const Claude = ({size = 10}: Claude) => {
   return (
-    <svg viewBox="0 0 200 200" style={{ width: '10vw', height: '10vw' }}>
+    <svg viewBox="0 0 200 200" style={{ width: `${size}vw`, height: `${size}vw` }}>
   <g transform="translate(100, 100)">
     <line x1="0" y1="0" x2="0" y2="-90" stroke="#da7756" strokeWidth="18" strokeLinecap="round"/>
     <line x1="0" y1="0" x2="40" y2="-75" stroke="#da7756" strokeWidth="12" strokeLinecap="round"/>
