@@ -26,6 +26,7 @@ const Transition = ({ isStart = false, onDone }: { isStart?: boolean, onDone?: (
       })
     }
   }, [isStart])
+
   return (
     <>
       <div className="fixed inset-0 z-40 pointer-events-none hidden min-[800px]:block">

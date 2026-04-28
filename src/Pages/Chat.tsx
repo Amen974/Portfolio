@@ -34,6 +34,7 @@ const Chat = () => {
   }
 
   useEffect(() => {
+    if (!claudLoading.current) return
     if (loading) {
       gsap.to(claudLoading.current, {
         rotateZ: 360,
@@ -43,12 +44,22 @@ const Chat = () => {
         immediateRender: false,
       })
     } else {
+      if (!claudLoading.current) return 
       gsap.killTweensOf(claudLoading.current)
       gsap.set(claudLoading.current, { rotateZ: 0 })
     }
   }, [loading])
 
   const { triggerTransition } = usePageTransition()
+   const [windowWidth, setWindowWidth] = useState(window.innerWidth)
+  
+    useEffect(() => {
+      const handleResize = () => setWindowWidth(window.innerWidth)
+      window.addEventListener('resize', handleResize)
+      return () => window.removeEventListener('resize', handleResize)
+    }, [])
+  
+    const robotSize = windowWidth <= 800 ? 10 : 4
   return (
     <section className="fixed inset-0 flex flex-col items-center">
 
@@ -70,8 +81,8 @@ const Chat = () => {
 
         </div>
         {messages.length === 0 && (
-          <div className="uppercase flex items-center text-[2.5vw] gap-2 absolute bottom-10 left-1/2 -translate-x-1/2">
-            <Claude size={3} />
+          <div className="uppercase flex items-center justify-center text-[clamp(20px,2.5vw,9999px)] gap-2 absolute bottom-[2vw] left-1/2 -translate-x-1/2 w-full">
+            <Claude size={robotSize} />
             <h1>ask me about Amen</h1>
           </div>
         )}

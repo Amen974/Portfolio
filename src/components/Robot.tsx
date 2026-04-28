@@ -35,6 +35,7 @@ const Robot = ({ state = 'waveidle', size = 25, animate = false, onReady }: Robo
 
   const playWaveidle = () => {
     killAll()
+    if(!svgRef.current) return
     const tl = gsap.timeline()
 
     gsap.to(svgRef.current, {

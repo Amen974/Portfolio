@@ -5,9 +5,20 @@ const CustomCursor = () => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isVisible, setIsVisible] = useState(false);
   const { type } = useCursor();
-  const hasFinePointer = window.matchMedia('(pointer: fine)').matches;
+  const [hasFinePointer, setHasFinePointer] = useState(
+    () => window.matchMedia('(pointer: fine)').matches
+  );
   useEffect(() => {
-    if (!window.matchMedia('(pointer: fine)').matches) return;
+    const mq = window.matchMedia('(pointer: fine)');
+    const handler = (e: MediaQueryListEvent) => {
+      setHasFinePointer(e.matches);
+      if (!e.matches) setIsVisible(false);
+    };
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+
+  useEffect(() => {
     if (!hasFinePointer) return;
 
     const handleMouseMove = (e: MouseEvent) => {
