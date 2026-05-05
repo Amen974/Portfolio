@@ -4,12 +4,14 @@ import './index.css'
 import App from './App.tsx'
 import CursorProvider from './components/CursorProvider.tsx'
 import { BrowserRouter } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <CursorProvider>
         <App />
+        <Analytics />
       </CursorProvider>
     </BrowserRouter>
   </StrictMode>,
