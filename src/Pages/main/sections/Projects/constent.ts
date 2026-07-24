@@ -1,8 +1,9 @@
-const jobTraker = 'Built a full-stack job application tracker from scratch, architecting the entire pipeline with React, TypeScript, and Supabase. Implemented secure authentication, full CRUD with status filtering, and a real-time dashboard featuring live stats and a donut chart with date filters — all powered by Supabase Realtime syncing changes instantly across pages.'
 const chess = 'Built a fully functional chess game in React, engineering all game logic — move generation, validation, and endgame detection — completely separate from the UI layer. Integrated Stockfish AI via chess-api.com with 4 difficulty levels, and implemented a full game control suite including undo/redo, FEN import/export, move history navigation, and GSAP-powered piece animations.'
+const obsidian = 'Built a full-stack coffee lounge platform from scratch, architecting a public ordering/booking site and a separate real-time staff dashboard on Next.js, TypeScript, and Supabase. Implemented guest checkout and table reservations with zero login required, a layered auth system (middleware + Postgres RLS) securing the staff dashboard, and a live order/reservation feed powered by Supabase Realtime — plus a scroll-driven GSAP storefront and a draggable, corner-snapping cart button that doubles as a real-time status indicator.'
 
 const technologies = {
   react:  'React',
+  nextjs: 'Next.js',
   typescript: 'TypeScript',
   supabase: 'Supabase',
   tailwind: 'Tailwind',
@@ -13,26 +14,27 @@ const technologies = {
 export const projects = [
   {
     id: 1,
-    title: 'job-tracker',
+    title: 'ObsidianCoffeeLounge',
     number: '01',
-    link: 'https://job-tracker-xi-ten.vercel.app/',
-    img: '/Screenshot 2026-04-04 141826.png',
+    link: 'https://cofee-cyan.vercel.app/',
+    img: '/coffeeSitePic.png',
     year: '2026',
-    role: 'Frontend developer + UI/UX designer',
+    role: 'Full-stack developer + UI/UX designer',
     technologies: [
-      technologies.react,
+      technologies.nextjs,
       technologies.typescript,
       technologies.supabase,
       technologies.tailwind,
+      technologies.gsap,
     ],
-    p: jobTraker
+    p: obsidian
   },
   {
     id: 2,
     title: 'ReactChess',
     number: '02',
     link: 'https://chess-site-orpin.vercel.app/',
-    img: '/Screenshot 2026-03-16 025836.png',
+    img: '/chessSitePic.png',
     year: '2025',
     role: 'Frontend developer',
     technologies: [
