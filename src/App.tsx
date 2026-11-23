@@ -11,7 +11,7 @@ const AppInner = () => {
   return (
     <>
       <CustomCursor />
-      {isStart && <Transition isStart={isStart} onDone={onDone} />}
+      {isStart && <Transition onDone={onDone} />}
       <Routes>
         <Route path="/" element={<Main />} />
         <Route path="/Chat" element={<Chat />} />

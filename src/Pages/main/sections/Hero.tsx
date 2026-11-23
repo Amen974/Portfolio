@@ -21,8 +21,6 @@ const Hero = () => {
   const span5 = useRef(null)
   const hi = useRef(null)
 
-  const robotRedy = useRef<(() => void) | null>(null)
-
   const { setType } = useCursor()
 
   useGSAP(() => {
@@ -53,8 +51,7 @@ const Hero = () => {
       .fromTo(span3.current, before, after, "-=0.4")
 
       .from(robot.current, { scale: 0, opacity: 0, ease: "back.out(1.2)", }, "-=0.2")
-      .call(() => robotRedy.current?.())
-      .from(claudeLetrs, { opacity: 0, y: 20, stagger: 0.05, ease: 'power2.out', }, '<')
+      .from(claudeLetrs, { opacity: 0, y: 20, stagger: 0.05, ease: 'power2.out', }, '>')
 
       .fromTo(thirdH1.current, { opacity: 0, yPercent: 50 }, { opacity: 1, yPercent: 0 }, "-=0.4")
       .fromTo(fourthH1.current, { opacity: 0, yPercent: 50 }, { opacity: 1, yPercent: 0 }, "-=0.4")
@@ -78,36 +75,33 @@ const Hero = () => {
   }, [])
 
   const { triggerTransition } = usePageTransition()
+
+  const openChat = {
+    onMouseEnter: () => setType('click'),
+    onMouseLeave: () => setType('default'),
+    onClick: () => triggerTransition('/Chat'),
+  }
+
   return (
 
     <section className='h-[42vw] w-full mb-[12vw] mx-auto max-w-[94vw] relative uppercase'>
-      <h1 className="text-[5vw] absolute tracking-wide" ref={firstH1}>Frontend Developer</h1>
+      <h1 className="text-[5vw] absolute tracking-wide" ref={firstH1}>Full Stack Developer</h1>
       <h1 className="text-[4vw]/[1em] text-right absolute left-[12.3vw] top-[12vw] max-w-[40vw] tracking-wide">
         <span className="inline-block" ref={span1}>specialize in </span>
         <span className="inline-block" ref={span2}>building modern </span>
-        <span className="inline-block" ref={span3}>React applications</span>
+        <span className="inline-block" ref={span3}>web applications</span>
       </h1>
 
       <p className="text-[#da7756] absolute right-[10.5vw] top-[2vw] md:right-[13.8vw] md:top-[4vw] text-[1.8vw] md:text-[1vw]" ref={hi}>hi im claude</p>
 
-      <div className="absolute right-[5vw] top-[2.5vw]"
-        ref={robot}
-        onMouseEnter={(() => setType('click'))}
-        onMouseLeave={(() => setType('default'))}
-        onClick={() => triggerTransition('/Chat')}
-      >
+      <div className="absolute right-[5vw] top-[2.5vw]" ref={robot} {...openChat}>
         <Robot />
       </div>
 
       <h1 className="text-[4vw] text-right absolute right-0 top-[30vw] tracking-wide" ref={thirdH1}>with a focus</h1>
       <h1 className="text-[4vw]/[1em] text-right absolute right-[2vw] top-[35vw] tracking-wide" ref={fourthH1}>on performance</h1>
 
-      <div className="absolute left-[5vw] bottom-[6vw]"
-        ref={claude}
-        onMouseEnter={(() => setType('click'))}
-        onMouseLeave={(() => setType('default'))}
-        onClick={() => triggerTransition('/Chat')}
-      >
+      <div className="absolute left-[5vw] bottom-[6vw]" ref={claude} {...openChat}>
         <Claude />
       </div>
 
@@ -117,8 +111,8 @@ const Hero = () => {
           <span className="block h-full w-[0.5vw] md:w-[0.2vw] bg-[#da7756]" ref={line}></span>
         </div>
         <div className="flex flex-col">
-          <span ref={span4}>React Developer</span>
-          <span ref={span5}>Freelancer</span>
+          <span ref={span4}>TypeScript & Rust</span>
+          <span ref={span5}>Open to work</span>
         </div>
       </div>
     </section>

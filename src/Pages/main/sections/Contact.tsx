@@ -1,6 +1,7 @@
 import { FaLinkedin, FaGithub, FaEnvelope } from 'react-icons/fa'
 import { SiUpwork } from 'react-icons/si'
-import { useEffect, useRef, useState } from "react"
+import { useRef } from "react"
+import { useMediaQuery } from "react-responsive"
 import { useGSAP } from "@gsap/react"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/all"
@@ -10,37 +11,34 @@ import { usePageTransition } from '../../../usePageTransition'
 
 gsap.registerPlugin(ScrollTrigger);
 
+const links = [
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/amen-allah-arfaoui-a4a3a7397/', Icon: FaLinkedin },
+  { label: 'GitHub', href: 'https://github.com/Amen974', Icon: FaGithub },
+  { label: 'Email', href: 'mailto:aamenallah593@gmail.com', Icon: FaEnvelope },
+  { label: 'Upwork', href: 'https://www.upwork.com/freelancers/~010740a1ca4a28c240', Icon: SiUpwork },
+]
+
 const Contact = () => {
-  const linkedin = useRef<HTMLAnchorElement>(null)
-  const github = useRef<HTMLAnchorElement>(null)
-  const envelope = useRef<HTMLAnchorElement>(null)
-  const upwork = useRef<HTMLAnchorElement>(null)
-  const text = useRef(null)
-  const section = useRef<HTMLDivElement>(null)
-  const robot = useRef<HTMLDivElement>(null)
+  const text = useRef<HTMLParagraphElement>(null)
+  const section = useRef<HTMLElement>(null)
+  const robot = useRef<HTMLButtonElement>(null)
   const { setType } = useCursor()
+  const { triggerTransition } = usePageTransition()
 
-  const [width, setWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0)
-
-  useEffect(() => {
-    const handleResize = () => setWidth(window.innerWidth)
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
+  const isMobile = useMediaQuery({ maxWidth: 799 })
 
   useGSAP(() => {
     const splitLetters = (el: HTMLElement | null) => {
       if (!el) return []
-      const text = el.innerText
-      el.innerHTML = text
+      const value = el.innerText
+      el.innerHTML = value
         .split("")
         .map(char => `<span style="display:inline-block">${char === " " ? "&nbsp;" : char}</span>`)
         .join("")
       return el.querySelectorAll("span")
     }
-    const claudeLetrs = splitLetters(text.current!)
-
-    const links = [linkedin.current, github.current, envelope.current, upwork.current]
+    const letters = splitLetters(text.current)
+    const linkEls = gsap.utils.toArray<HTMLAnchorElement>("a", section.current)
 
     const tl = gsap.timeline({
       scrollTrigger: {
@@ -48,91 +46,68 @@ const Contact = () => {
         start: "center bottom",
         toggleActions: "play none none none",
       },
-      onComplete: () => {
-        if (width < 800) return
-        gsap.to([robot.current, ...links], {
-          y: -10,
-          duration: 1.8,
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut",
-        })
-      }
-    });
+    })
 
     tl.from(robot.current, { scale: 0, opacity: 0, ease: "back.out(1.2)" })
-      .from(claudeLetrs, { opacity: 0, y: 20, stagger: 0.03, ease: "power2.out" })
-      .from(links, { opacity: 0, y: 30, stagger: 0.15, ease: "back.out(1.2)" })
-  }, [])
+      .from(letters, { opacity: 0, y: 20, stagger: 0.03, ease: "power2.out" })
+      .from(linkEls, { opacity: 0, y: 30, stagger: 0.15, ease: "back.out(1.2)" })
 
-  const size = width < 800 ? 35 : 25;
+    const mm = gsap.matchMedia()
+    mm.add("(min-width: 800px) and (prefers-reduced-motion: no-preference)", () => {
+      tl.to([robot.current, ...linkEls], {
+        y: -10,
+        duration: 1.8,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+      })
+    })
 
-    const { triggerTransition } = usePageTransition()
+    return () => mm.revert()
+  }, { scope: section })
+
+  const size = isMobile ? 35 : 25;
+
   return (
-    <section className="uppercase mb-[10vw] min-[800px]:mb-0 relative h-[45vw]" ref={section}>
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" ref={robot}>
-        <div className="relative flex flex-col items-center">
-          <p className="absolute text-[#da7756] text-xs min-[800px]:text-[1vw] left-1/2 -translate-x-1/2 -top-[-2vw] whitespace-nowrap" ref={text}>
+    <section className="uppercase pb-20 min-[800px]:pb-[8vw]" ref={section}>
+      <div className="flex flex-col items-center gap-10 px-4 min-[800px]:gap-[3vw] min-[800px]:px-[3vw]">
+        <div className="flex flex-col items-center gap-4 min-[800px]:gap-[1.5vw]">
+          <p
+            className="whitespace-nowrap text-center text-xs tracking-widest text-[#da7756] min-[800px]:text-[clamp(0.8rem,1vw,1rem)]"
+            ref={text}
+          >
             LET'S WORK Together
           </p>
-          <div 
-            onMouseEnter={(()=>setType('click'))} 
-            onMouseLeave={(()=>setType('default'))}
+          <button
+            type="button"
+            aria-label="Open chat"
+            className="block"
+            ref={robot}
+            onMouseEnter={() => setType('click')}
+            onMouseLeave={() => setType('default')}
             onClick={() => triggerTransition('/Chat')}
           >
-            <Robot state="non" size={size} />
-          </div>
-          
+            <Robot slot="contact" size={size} />
+          </button>
+        </div>
+
+        <div className="grid w-full max-w-xl grid-cols-2 gap-3 min-[800px]:flex min-[800px]:w-auto min-[800px]:max-w-none min-[800px]:gap-4">
+          {links.map(({ label, href, Icon }) => (
+            <a
+              key={label}
+              href={href}
+              target="_blank"
+              rel="noreferrer"
+              className="flex min-h-11 items-center justify-center gap-2 rounded-sm border border-[#da7756] px-4 py-3 shadow-2xl min-[800px]:gap-[0.5vw] min-[800px]:px-6 min-[800px]:py-4"
+              onMouseEnter={() => setType('link')}
+              onMouseLeave={() => setType('default')}
+            >
+              <Icon className="text-base text-[#da7756] min-[800px]:text-[clamp(1.1rem,1.7vw,1.6rem)]" />
+              <span className="text-sm uppercase text-[#da7756] min-[800px]:text-[clamp(0.9rem,1.1vw,1.1rem)]">{label}</span>
+            </a>
+          ))}
         </div>
       </div>
-
-      <a
-        ref={linkedin}
-        href='https://www.linkedin.com/in/amen-allah-arfaoui-a4a3a7397/'
-        target="blank"
-        className="border border-[#da7756] px-[2vw] py-[1vw] flex items-center justify-center gap-[0.5vw] shadow-2xl rounded-sm absolute left-[13vw] min-[400]:left-[16vw] top-[16.5vw] min-[800px]:left-[25vw] min-[800px]:top-[18.2vw]"
-        onMouseEnter={(() => setType('link'))}
-        onMouseLeave={(() => setType('default'))}
-      >
-        <FaLinkedin className="text-xs min-[800px]:text-[1.7vw] text-[#da7756]" />
-        <span className="text-[#da7756] text-xs min-[800px]:text-[1vw]">LinkedIn</span>
-      </a>
-
-      <a
-        ref={github}
-        href='https://github.com/Amen974'
-        target="blank"
-        className="border border-[#da7756] px-[2vw] py-[1vw] flex items-center justify-center gap-[0.5vw] shadow-2xl rounded-sm absolute left-[27vw] top-[33.5vw] min-[800px]:left-[33.5vw] min-[800px]:top-[31vw]"
-        onMouseEnter={(() => setType('link'))}
-        onMouseLeave={(() => setType('default'))}
-      >
-        <FaGithub className="text-xs min-[800px]:text-[1.7vw] text-[#da7756]" />
-        <span className="text-[#da7756] text-xs min-[800px]:text-[1vw]">GitHub</span>
-      </a>
-
-      <a
-        ref={envelope}
-        href='mailto:aamenallah593@gmail.com'
-        target="blank"
-        className="border border-[#da7756] px-[2vw] py-[1vw] flex items-center justify-center gap-[0.5vw] shadow-2xl rounded-sm absolute left-[59vw] top-[33.5vw] min-[800px]:left-[57vw] min-[800px]:top-[31vw]"
-        onMouseEnter={(() => setType('link'))}
-        onMouseLeave={(() => setType('default'))}
-      >
-        <FaEnvelope className="text-xs min-[800px]:text-[1.7vw] text-[#da7756]" />
-        <span className="text-[#da7756] text-xs min-[800px]:text-[1vw]">Email</span>
-      </a>
-
-      <a
-        ref={upwork}
-        href='https://www.upwork.com/freelancers/~010740a1ca4a28c240'
-        target="blank"
-        className="border border-[#da7756] px-[2vw] py-[1vw] flex items-center justify-center gap-[0.5vw] shadow-2xl rounded-sm absolute right-[16.8vw]  top-[16.5vw] min-[800px]:right-[26vw] min-[800px]:top-[18.2vw]"
-        onMouseEnter={(() => setType('link'))}
-        onMouseLeave={(() => setType('default'))}
-      >
-        <SiUpwork className="text-xs min-[800px]:text-[1.7vw] text-[#da7756]" />
-        <span className="text-[#da7756] text-xs min-[800px]:text-[1vw]">Upwork</span>
-      </a>
     </section>
   )
 }

@@ -3,46 +3,34 @@ import { useGSAP } from "@gsap/react"
 import gsap from "gsap"
 import Robot from "./components/Robot"
 
-const Transition = ({ isStart = false, onDone }: { isStart?: boolean, onDone?: () => void }) => {
-  const robotDesktop = useRef<HTMLDivElement>(null)
-  const robotMobile = useRef<HTMLDivElement>(null)
-  const overlayDesktop = useRef<HTMLDivElement>(null)
-  const overlayMobile = useRef<HTMLDivElement>(null)
-
-  const playRef = useRef<(() => void) | null>(null)
+const Transition = ({ onDone }: { onDone: () => void }) => {
+  const overlay = useRef<HTMLDivElement>(null)
+  const robot = useRef<HTMLDivElement>(null)
 
   useGSAP(() => {
-    if (isStart) {
-      const isMobile = window.innerWidth < 800
-      const robotRef = isMobile ? robotMobile.current : robotDesktop.current
-      const overlayRef = isMobile ? overlayMobile.current : overlayDesktop.current
+    const el = robot.current
+    if (!el) return
 
-      gsap.to(overlayRef, { opacity: 0.6, duration: 0.3 })
-      playRef.current?.()
-      gsap.to(robotRef, {
-        x: isMobile ? 400 : 700,
-        duration: 1.2,
-        onComplete: () => onDone?.()
-      })
-    }
-  }, [isStart])
+    gsap.to(overlay.current, { opacity: 0.6, duration: 0.3 })
+    gsap.to(el, {
+      x: document.documentElement.clientWidth - el.getBoundingClientRect().right,
+      duration: 1.2,
+      onComplete: onDone,
+    })
+  }, [])
 
   return (
-    <>
-      <div className="fixed inset-0 z-40 pointer-events-none hidden min-[800px]:block">
-        <div ref={overlayDesktop} className="absolute inset-0 bg-[#0a0f1e]" style={{ opacity: 0 }} />
-        <div className="fixed top-[21vw] left-[30vw]" ref={robotDesktop}>
-          <Robot size={5} state='transition' animate={true} onReady={(play) => { playRef.current = play; play() }} />
+    <div className="fixed inset-0 z-40 pointer-events-none">
+      <div ref={overlay} className="absolute inset-0 bg-[#0a0f1e] opacity-0" />
+      <div
+        ref={robot}
+        className="absolute left-0 top-[calc(50%_-_7.5vw)] min-[800px]:left-[30vw] min-[800px]:top-[21vw]"
+      >
+        <div className="min-[800px]:origin-top-left min-[800px]:scale-[0.3333]">
+          <Robot size={15} slot="transition" />
         </div>
       </div>
-
-      <div className="fixed inset-0 z-40 pointer-events-none min-[800px]:hidden">
-        <div ref={overlayMobile} className="absolute inset-0 bg-[#0a0f1e]" style={{ opacity: 0 }} />
-        <div className="fixed top-1/2 -translate-y-1/2" ref={robotMobile}>
-          <Robot size={15} state='transition' animate={true} onReady={(play) => { playRef.current = play; play() }} />
-        </div>
-      </div>
-    </>
+    </div>
   )
 }
 

@@ -24,3 +24,10 @@ dist-ssr
 *.sw?
 .env
 .env.local
+# AI agent rules, skills and state (tooling, not app code)
+AGENTS.md
+CLAUDE.md
+PROJECT_STATE.md
+.agents/
+.claude/
+skills-lock.json
