@@ -54,25 +54,25 @@ const About = () => {
   }, { scope: section });
 
   return (
-    <section className="uppercase relative mt-[10vw] px-[3vw] pb-[10vw] min-[800px]:pb-[4vw]" ref={section}>
+    <section className="uppercase relative mt-[clamp(3rem,10vw,8rem)] px-4 pb-[clamp(3rem,10vw,8rem)] min-[800px]:px-[clamp(1rem,3vw,3rem)] min-[800px]:pb-16" ref={section}>
       <h1
-        className="text-center font-bold leading-[0.82] text-[#da7756] text-[clamp(4rem,20vw,16rem)] min-[800px]:text-[clamp(6rem,16.25vw,18rem)]"
+        className="text-center font-bold leading-[0.82] text-accent text-[clamp(4rem,20vw,16rem)] min-[800px]:text-[clamp(6rem,16.25vw,18rem)]"
         ref={about}
       >
         About
       </h1>
 
-      <div className="mt-6 grid grid-cols-2 items-center gap-x-4 gap-y-6 min-[800px]:mt-[0.5vw] min-[800px]:flex min-[800px]:items-center min-[800px]:justify-center min-[800px]:gap-x-[2vw]">
+      <div className="mt-6 flex flex-col items-center gap-y-6 min-[800px]:mt-2 min-[800px]:flex-row min-[800px]:justify-center min-[800px]:gap-x-8">
         <h1
           ref={letterM}
           aria-hidden="true"
-          className="justify-self-start font-bold leading-[0.8] text-[#da7756] text-[clamp(3rem,18vw,14rem)] min-[800px]:text-[clamp(5rem,16.25vw,17rem)]"
+          className="hidden font-bold leading-[0.8] min-[800px]:block min-[800px]:w-[1em] min-[800px]:text-center min-[800px]:text-[clamp(5rem,16.25vw,17rem)]"
         >
-          M
+          <span className="text-accent inline-block">M</span>
         </h1>
         <p
           ref={text}
-          className="order-3 col-span-2 mx-auto max-w-[34ch] text-center text-xs leading-relaxed opacity-0 min-[800px]:order-0 min-[800px]:col-span-1 min-[800px]:mx-0 min-[800px]:w-[clamp(16rem,30vw,34rem)] min-[800px]:max-w-none min-[800px]:text-[clamp(0.85rem,1vw,1.05rem)]"
+          className="mx-auto max-w-[34ch] text-center text-xs leading-relaxed opacity-0 min-[800px]:mx-0 min-[800px]:w-[clamp(16rem,30vw,34rem)] min-[800px]:max-w-none min-[800px]:text-[clamp(0.85rem,1vw,1.05rem)]"
         >
           Full stack developer. React and Next.js interfaces on top of NestJS
           APIs, data models, and auth. New builds or existing codebases,
@@ -81,17 +81,17 @@ const About = () => {
         <h1
           ref={letterE}
           aria-hidden="true"
-          className="justify-self-end font-bold leading-[0.8] text-[#da7756] text-[clamp(3rem,18vw,14rem)] min-[800px]:text-[clamp(5rem,16.25vw,17rem)]"
+          className="hidden font-bold leading-[0.8] min-[800px]:block min-[800px]:w-[1em] min-[800px]:text-center min-[800px]:text-[clamp(5rem,16.25vw,17rem)]"
         >
-          E
+          <span className="text-accent inline-block">E</span>
         </h1>
       </div>
 
-      <div className="mt-[8vw] overflow-hidden border-y border-[#da7756]/30 py-[1.2vw] min-[800px]:mt-[2vw]" ref={skills}>
+      <div className="mt-[clamp(2.5rem,8vw,6rem)] overflow-hidden border-y border-accent/30 py-3 min-[800px]:mt-8" ref={skills}>
         <div className="flex animate-marquee w-max">
           {[...icons, ...icons, ...icons, ...icons].map((item, i) => (
-            <div key={i} className="mr-8 flex shrink-0 items-center gap-2 min-[800px]:mr-[3vw] min-[800px]:gap-[0.6vw]">
-              <item.icon className="text-[#da7756] min-[800px]:h-[clamp(1rem,1.4vw,1.5rem)] min-[800px]:w-[clamp(1rem,1.4vw,1.5rem)]" />
+            <div key={i} className="mr-8 flex shrink-0 items-center gap-2 min-[800px]:mr-8 min-[800px]:gap-2">
+              <item.icon className="text-accent min-[800px]:h-[clamp(1rem,1.4vw,1.5rem)] min-[800px]:w-[clamp(1rem,1.4vw,1.5rem)]" />
               <span className="text-xs tracking-widest min-[800px]:text-[clamp(0.75rem,0.75vw,0.9rem)]">{item.label}</span>
             </div>
           ))}

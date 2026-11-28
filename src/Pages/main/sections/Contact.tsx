@@ -1,13 +1,13 @@
 import { FaLinkedin, FaGithub, FaEnvelope } from 'react-icons/fa'
 import { SiUpwork } from 'react-icons/si'
 import { useRef } from "react"
-import { useMediaQuery } from "react-responsive"
+import { useMediaQuery, DESKTOP } from "../../../lib/useMediaQuery"
+import { splitLetters } from "../../../lib/splitLetters"
 import { useGSAP } from "@gsap/react"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/all"
-import { useCursor } from '../../../components/CursorContext'
 import Robot from '../../../components/Robot'
-import { usePageTransition } from '../../../usePageTransition'
+import { usePageTransition } from '../../../TransitionProvider'
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -22,21 +22,11 @@ const Contact = () => {
   const text = useRef<HTMLParagraphElement>(null)
   const section = useRef<HTMLElement>(null)
   const robot = useRef<HTMLButtonElement>(null)
-  const { setType } = useCursor()
   const { triggerTransition } = usePageTransition()
 
-  const isMobile = useMediaQuery({ maxWidth: 799 })
+  const isMobile = !useMediaQuery(DESKTOP)
 
   useGSAP(() => {
-    const splitLetters = (el: HTMLElement | null) => {
-      if (!el) return []
-      const value = el.innerText
-      el.innerHTML = value
-        .split("")
-        .map(char => `<span style="display:inline-block">${char === " " ? "&nbsp;" : char}</span>`)
-        .join("")
-      return el.querySelectorAll("span")
-    }
     const letters = splitLetters(text.current)
     const linkEls = gsap.utils.toArray<HTMLAnchorElement>("a", section.current)
 
@@ -69,11 +59,11 @@ const Contact = () => {
   const size = isMobile ? 35 : 25;
 
   return (
-    <section className="uppercase pb-20 min-[800px]:pb-[8vw]" ref={section}>
-      <div className="flex flex-col items-center gap-10 px-4 min-[800px]:gap-[3vw] min-[800px]:px-[3vw]">
-        <div className="flex flex-col items-center gap-4 min-[800px]:gap-[1.5vw]">
+    <section className="uppercase pb-20 min-[800px]:pb-[clamp(3rem,8vw,6rem)]" ref={section}>
+      <div className="flex flex-col items-center gap-5 px-4 min-[800px]:gap-6 min-[800px]:px-[clamp(1rem,3vw,3rem)]">
+        <div className="flex flex-col items-center gap-4 min-[800px]:gap-6">
           <p
-            className="whitespace-nowrap text-center text-xs tracking-widest text-[#da7756] min-[800px]:text-[clamp(0.8rem,1vw,1rem)]"
+            className="whitespace-nowrap text-center text-xs tracking-widest text-accent min-[800px]:text-[clamp(0.8rem,1vw,1rem)]"
             ref={text}
           >
             LET'S WORK Together
@@ -81,10 +71,8 @@ const Contact = () => {
           <button
             type="button"
             aria-label="Open chat"
-            className="block"
+            className="block text-accent"
             ref={robot}
-            onMouseEnter={() => setType('click')}
-            onMouseLeave={() => setType('default')}
             onClick={() => triggerTransition('/Chat')}
           >
             <Robot slot="contact" size={size} />
@@ -98,12 +86,10 @@ const Contact = () => {
               href={href}
               target="_blank"
               rel="noreferrer"
-              className="flex min-h-11 items-center justify-center gap-2 rounded-sm border border-[#da7756] px-4 py-3 shadow-2xl min-[800px]:gap-[0.5vw] min-[800px]:px-6 min-[800px]:py-4"
-              onMouseEnter={() => setType('link')}
-              onMouseLeave={() => setType('default')}
+              className="flex min-h-11 items-center justify-center gap-2 rounded-sm border border-accent px-4 py-3 shadow-2xl min-[800px]:gap-2 min-[800px]:px-6 min-[800px]:py-4"
             >
-              <Icon className="text-base text-[#da7756] min-[800px]:text-[clamp(1.1rem,1.7vw,1.6rem)]" />
-              <span className="text-sm uppercase text-[#da7756] min-[800px]:text-[clamp(0.9rem,1.1vw,1.1rem)]">{label}</span>
+              <Icon className="text-base text-accent min-[800px]:text-[clamp(1.1rem,1.7vw,1.6rem)]" />
+              <span className="text-sm uppercase text-accent min-[800px]:text-[clamp(0.9rem,1.1vw,1.1rem)]">{label}</span>
             </a>
           ))}
         </div>

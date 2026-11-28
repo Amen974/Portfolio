@@ -17,7 +17,7 @@ export const projects = [
     title: 'ObsidianCoffeeLounge',
     number: '01',
     link: 'https://cofee-cyan.vercel.app/',
-    img: '/coffeeSitePic.png',
+    img: 'https://zniibxdvdkkieetfdixp.supabase.co/storage/v1/object/public/project-images/coffeeSitePic.webp',
     year: '2026',
     role: 'Full-stack developer + UI/UX designer',
     technologies: [
@@ -34,7 +34,7 @@ export const projects = [
     title: 'ReactChess',
     number: '02',
     link: 'https://chess-site-orpin.vercel.app/',
-    img: '/chessSitePic.png',
+    img: 'https://zniibxdvdkkieetfdixp.supabase.co/storage/v1/object/public/project-images/chessSitePic.png',
     year: '2025',
     role: 'Frontend developer',
     technologies: [

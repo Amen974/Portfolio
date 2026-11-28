@@ -1,5 +1,8 @@
 import { GoogleGenAI } from "@google/genai"
-import type { VercelRequest, VercelResponse } from "@vercel/node"
+
+type ChatMessage = { role: "user" | "assistant"; content: string }
+type ChatRequest = { method?: string; body: { messages?: ChatMessage[] } }
+type ChatResponse = { status: (code: number) => { json: (body: unknown) => void } }
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY })
 
@@ -9,67 +12,24 @@ Your job is to answer questions about Amen clearly and concisely — like a
 knowledgeable assistant who knows him well.
 
 == WHO IS AMEN ==
-Name: Amen Allah Arfaoui
-Location: Tunisia
-Languages: Arabic, English
-Education: Currently studying Computer Science at university
-Experience: 2 years of self-taught frontend development
-What he does: Builds modern, interactive React applications — real-time, 
-AI-powered, and visually polished.
+Name: {{NAME}}
+Location: {{LOCATION}}
+Languages: {{LANGUAGES}}
+Education: {{EDUCATION}}
+Experience: {{EXPERIENCE}}
+What he does: {{SUMMARY}}
 
 == OPEN TO ==
-- Junior frontend developer roles
-- Freelance projects
-- Remote opportunities
+{{OPEN_TO}}
 
 == CONTACT & LINKS ==
-Upwork: https://www.upwork.com/freelancers/~010740a1ca4a28c240
-LinkedIn: https://www.linkedin.com/in/amen-allah-arfaoui-a4a3a7397/
-GitHub: https://github.com/Amen974
-Email: aamenallah593@gmail.com
+{{CONTACTS}}
 
 == SKILLS ==
-React, TypeScript, JavaScript, Vite, Tailwind CSS, GSAP + ScrollTrigger, 
-Supabase (Auth, Database, Realtime), REST APIs, Git, Vercel, HTML5, CSS3, 
-Responsive Design, Unit Testing (Vitest)
+{{SKILLS}}
 
-== PROJECT 1 — ReactChess ==
-Live: https://chess-site-orpin.vercel.app/
-GitHub: https://github.com/Amen974/react-chess
-A fully functional chess game built from scratch with React and TypeScript.
-Features:
-- AI opponent powered by Stockfish engine via chess-api.com
-- 4 difficulty levels (Easy to Max)
-- Choose side: White, Black, or Random
-- Full move history with click-to-navigate
-- Undo / Redo moves
-- FEN import/export for loading any board position
-- Piece promotion modal
-- Board flip
-- Smooth animations with GSAP
-Architecture highlights:
-- All game logic lives in a separate engine/ folder (move generation, 
-  validation, endgame detection) — completely decoupled from the UI
-- State managed with useReducer via a gameReducer
-- Board.tsx is purely presentational — all logic in useGameControls hook
-- AI moves fetched async from Stockfish with 800ms minimum delay for 
-  natural feel
-- Unit tested with Vitest
-Tech: React, TypeScript, Vite, Tailwind CSS, GSAP, Stockfish, Vitest
-
-== PROJECT 2 — JobTracker ==
-Live: https://job-tracker-xi-ten.vercel.app/
-GitHub: https://github.com/Amen974/job-tracker
-A full-stack job application tracking app to manage an entire job search 
-pipeline from application to offer.
-Features:
-- Secure authentication via Supabase Auth
-- Full CRUD for job applications with status tracking and filtering
-- Interview tracking — upcoming and past, grouped by date
-- Real-time dashboard with donut chart, date filters, live stats
-- Live updates across all pages using Supabase Realtime
-Tech: React, TypeScript, Vite, Tailwind CSS, Supabase (Auth, DB, Realtime), 
-React Router v6, Vercel
+== PROJECTS ==
+{{PROJECTS}}
 
 == BEHAVIOR RULES ==
 - Answer only about Amen, his skills, projects, and availability
@@ -81,11 +41,122 @@ React Router v6, Vercel
 - Tone: professional but friendly
 `
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+const SUPABASE_URL = process.env.VITE_SUPABASE_URL
+const SUPABASE_KEY = process.env.VITE_SUPABASE_ANON_KEY
+
+type ProjectRow = {
+  title: string
+  year: string
+  role: string
+  link: string
+  technologies: string[]
+  p: string
+}
+
+type LinkRow = { label: string; url: string }
+
+type ProfileRow = {
+  name: string
+  location: string
+  languages: string[]
+  education: string
+  experience: string
+  summary: string
+  open_to: string[]
+  skills: string[]
+  links: LinkRow[]
+}
+
+const supabaseSelect = async <T,>(query: string): Promise<T> => {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${query}`, {
+    headers: { apikey: SUPABASE_KEY ?? "", Authorization: `Bearer ${SUPABASE_KEY ?? ""}` },
+  })
+
+  if (!res.ok) throw new Error(`Supabase returned ${res.status}`)
+
+  return (await res.json()) as T
+}
+
+const loadProfile = async (): Promise<ProfileRow | null> => {
+  if (!SUPABASE_URL || !SUPABASE_KEY) return null
+
+  const rows = await supabaseSelect<ProfileRow[]>(
+    "profile?select=name,location,languages,education,experience,summary,open_to,skills,links&limit=1"
+  )
+
+  return rows[0] ?? null
+}
+
+const loadProjects = async (): Promise<ProjectRow[]> => {
+  if (!SUPABASE_URL || !SUPABASE_KEY) return []
+
+  return supabaseSelect<ProjectRow[]>(
+    "projects?select=title,year,role,link,technologies,p&order=number.asc"
+  )
+}
+
+const listBlock = (items: string[]) =>
+  items.length === 0 ? "- none listed" : items.map((item) => `- ${item}`).join("\n")
+
+const contactsBlock = (links: LinkRow[]) =>
+  links.length === 0 ? "none listed" : links.map((link) => `${link.label}: ${link.url}`).join("\n")
+
+const projectsBlock = (projects: ProjectRow[]) => {
+  if (projects.length === 0) return "No projects are listed right now."
+
+  return projects
+    .map(
+      (project, index) => `== PROJECT ${index + 1} — ${project.title} ==
+Live: ${project.link}
+Year: ${project.year} — Role: ${project.role}
+${project.p}
+Tech: ${project.technologies.join(", ")}`
+    )
+    .join("\n\n")
+}
+
+const buildSystemPrompt = (profile: ProfileRow, projects: ProjectRow[]) => {
+  const values: Record<string, string> = {
+    NAME: profile.name,
+    LOCATION: profile.location,
+    LANGUAGES: profile.languages.join(", "),
+    EDUCATION: profile.education,
+    EXPERIENCE: profile.experience,
+    SUMMARY: profile.summary,
+    OPEN_TO: listBlock(profile.open_to),
+    CONTACTS: contactsBlock(profile.links),
+    SKILLS: profile.skills.join(", "),
+    PROJECTS: projectsBlock(projects),
+  }
+
+  return Object.entries(values).reduce(
+    (prompt, [key, value]) => prompt.replace(`{{${key}}}`, () => value),
+    MY_INFO
+  )
+}
+
+
+export default async function handler(req: ChatRequest, res: ChatResponse) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
 
   const { messages } = req.body
   if (!messages) return res.status(400).json({ error: 'Missing messages' })
+
+  let profile: ProfileRow | null = null
+  try {
+    profile = await loadProfile()
+  } catch (error) {
+    console.error("Supabase profile fetch failed:", error)
+  }
+
+  if (!profile) return res.status(503).json({ error: 'Profile unavailable' })
+
+  let projects: ProjectRow[] = []
+  try {
+    projects = await loadProjects()
+  } catch (error) {
+    console.error("Supabase projects fetch failed:", error)
+  }
 
   try {
     const response = await ai.models.generateContent({
@@ -94,7 +165,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         role: m.role === 'assistant' ? 'model' : 'user',
         parts: [{ text: m.content }]
       })),
-      config: { systemInstruction: MY_INFO, temperature: 0.2 }
+      config: { systemInstruction: buildSystemPrompt(profile, projects), temperature: 0.2 }
     })
 
     res.status(200).json({ text: response.text })

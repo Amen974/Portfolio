@@ -1,7 +1,8 @@
 import { useGSAP } from "@gsap/react"
 import gsap from "gsap"
 import { useRef } from "react"
-import { ACCENT, svgSize, useRobotState, type RobotSlot } from "./svg"
+import { svgSize } from "./svg"
+import { useRobotState, type RobotSlot } from "./robot/store"
 
 gsap.registerPlugin(useGSAP)
 
@@ -100,15 +101,18 @@ const Robot = ({ slot = "hero", size = 25 }: RobotProps) => {
       aria-hidden="true"
       focusable="false"
     >
-      <rect x="50" y="20" width="100" height="80" fill={ACCENT} />
-      <rect ref={leftEye} x="70" y="40" width="10" height="20" fill="white" />
-      <rect ref={rightEye} x="120" y="40" width="10" height="20" fill="white" />
-      <rect ref={leftHand} x="31" y="50" width="20" height="20" fill={ACCENT} />
-      <rect x="149" y="50" width="20" height="20" fill={ACCENT} />
-      <rect ref={leftLeg1} x="50" y="100" width="15" height="30" fill={ACCENT} />
-      <rect ref={leftLeg2} x="70" y="100" width="15" height="30" fill={ACCENT} />
-      <rect ref={rightLeg1} x="115" y="100" width="15" height="30" fill={ACCENT} />
-      <rect ref={rightLeg2} x="135" y="100" width="15" height="30" fill={ACCENT} />
+      <rect x="50" y="20" width="100" height="80" fill="currentColor" />
+
+      <g>
+        <rect ref={leftEye} x="70" y="40" width="10" height="20" fill="white" />
+        <rect ref={rightEye} x="120" y="40" width="10" height="20" fill="white" />
+        <rect ref={leftHand} x="31" y="50" width="20" height="20" fill="currentColor" />
+        <rect x="149" y="50" width="20" height="20" fill="currentColor" />
+        <rect ref={leftLeg1} x="50" y="100" width="15" height="30" fill="currentColor" />
+        <rect ref={leftLeg2} x="70" y="100" width="15" height="30" fill="currentColor" />
+        <rect ref={rightLeg1} x="115" y="100" width="15" height="30" fill="currentColor" />
+        <rect ref={rightLeg2} x="135" y="100" width="15" height="30" fill="currentColor" />
+      </g>
     </svg>
   )
 }

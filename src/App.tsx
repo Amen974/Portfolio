@@ -1,21 +1,22 @@
+import { lazy, Suspense } from "react"
 import { Route, Routes } from "react-router-dom"
-import CustomCursor from "./components/CustomCursor"
 import Main from "./Pages/main/Main"
-import Chat from "./Pages/Chat"
 import Transition from "./Transition"
-import { usePageTransition } from "./usePageTransition"
-import { TransitionProvider } from "./TransitionProvider"
+import { usePageTransition, TransitionProvider } from "./TransitionProvider"
+
+const Chat = lazy(() => import("./Pages/Chat"))
 
 const AppInner = () => {
   const { isStart, onDone } = usePageTransition()
   return (
     <>
-      <CustomCursor />
       {isStart && <Transition onDone={onDone} />}
-      <Routes>
-        <Route path="/" element={<Main />} />
-        <Route path="/Chat" element={<Chat />} />
-      </Routes>
+      <Suspense fallback={null}>
+        <Routes>
+          <Route path="/" element={<Main />} />
+          <Route path="/Chat" element={<Chat />} />
+        </Routes>
+      </Suspense>
     </>
   )
 }

@@ -28,6 +28,7 @@ dist-ssr
 AGENTS.md
 CLAUDE.md
 PROJECT_STATE.md
+REFACTOR_PLAN.md
 .agents/
 .claude/
 skills-lock.json

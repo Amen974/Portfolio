@@ -21,10 +21,10 @@ const Transition = ({ onDone }: { onDone: () => void }) => {
 
   return (
     <div className="fixed inset-0 z-40 pointer-events-none">
-      <div ref={overlay} className="absolute inset-0 bg-[#0a0f1e] opacity-0" />
+      <div ref={overlay} className="absolute inset-0 bg-ink opacity-0" />
       <div
         ref={robot}
-        className="absolute left-0 top-[calc(50%_-_7.5vw)] min-[800px]:left-[30vw] min-[800px]:top-[21vw]"
+        className="absolute left-0 top-[calc(50%-7.5vw)] text-accent min-[800px]:left-[clamp(4rem,30vw,26rem)] min-[800px]:top-[clamp(4rem,21vw,16rem)]"
       >
         <div className="min-[800px]:origin-top-left min-[800px]:scale-[0.3333]">
           <Robot size={15} slot="transition" />

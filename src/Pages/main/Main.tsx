@@ -5,7 +5,7 @@ import Projects from './sections/Projects/Projects'
 
 const Main = () => {
   return (
-    <div className='pt-[5vw]'>
+    <div className='pt-[clamp(1rem,5vw,6rem)]'>
       <Hero/>
       <About/>
       <Projects/>

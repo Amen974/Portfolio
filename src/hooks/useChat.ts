@@ -1,5 +1,5 @@
-import { useState } from "react"
-import type { Message } from "../Types"
+import { useState } from 'react'
+import type { Message } from '../Types'
 
 export const useChat = () => {
   const [messages, setMessages] = useState<Message[]>([])
@@ -13,12 +13,13 @@ export const useChat = () => {
     setLoading(true)
 
     try {
-      const res = await fetch('/api/chat.ts', { 
+      const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: newMessages })
+        body: JSON.stringify({ messages: newMessages }),
       })
-      const data = await res.json()
+      if (!res.ok) throw new Error('Chat request failed')
+      const data: { text?: string } = await res.json()
       setMessages(prev => [...prev, { role: 'assistant', content: data.text ?? '' }])
     } catch {
       setMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, I am having trouble connecting right now.' }])

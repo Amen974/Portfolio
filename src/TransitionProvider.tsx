@@ -1,13 +1,20 @@
-import { useRef, useState } from "react"
+import { createContext, useContext, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { TransitionContext } from "./TransitionContext"
-import { useCursor } from "./components/CursorContext"
+
+type TransitionContextType = {
+  triggerTransition: (path: string) => void
+  isStart: boolean
+  onDone: () => void
+}
+
+const TransitionContext = createContext<TransitionContextType | null>(null)
+
+export const usePageTransition = () => useContext(TransitionContext)!
 
 export const TransitionProvider = ({ children }: { children: React.ReactNode }) => {
   const [isStart, setIsStart] = useState(false)
   const targetPath = useRef<string>("")
   const navigate = useNavigate()
-  const { setType } = useCursor()
 
   const triggerTransition = (path: string) => {
     targetPath.current = path
@@ -18,7 +25,6 @@ export const TransitionProvider = ({ children }: { children: React.ReactNode }) 
   const onDone = () => {
     setIsStart(false)
     document.body.style.overflow = ''
-    setType('default')
     navigate(targetPath.current)
   }
 
